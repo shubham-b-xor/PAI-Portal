@@ -54,18 +54,18 @@ const Sidebar: React.FC<SidebarProps> = ({ mobileOpen, onDrawerToggle, desktopOp
       path: '/delegation',
       allowedRoles: [UserRole.ADMIN, UserRole.PROCUREMENT_SPECIALIST],
     },
-    {
-      text: 'Chat',
-      icon: <ChatIcon />,
-      path: '/chat',
-      allowedRoles: [UserRole.ADMIN, UserRole.PROCUREMENT_SPECIALIST, UserRole.SUPPLIER],
-    },
-    {
-      text: 'Settings',
-      icon: <SettingsIcon />,
-      path: '/settings',
-      allowedRoles: [UserRole.ADMIN, UserRole.PROCUREMENT_SPECIALIST, UserRole.SUPPLIER],
-    },
+    // {
+    //   text: 'Chat',
+    //   icon: <ChatIcon />,
+    //   path: '/chat',
+    //   allowedRoles: [UserRole.ADMIN, UserRole.PROCUREMENT_SPECIALIST, UserRole.SUPPLIER],
+    // },
+    // {
+    //   text: 'Settings',
+    //   icon: <SettingsIcon />,
+    //   path: '/settings',
+    //   allowedRoles: [UserRole.ADMIN, UserRole.PROCUREMENT_SPECIALIST, UserRole.SUPPLIER],
+    // },
   ];
 
   // Filter menu items based on user role

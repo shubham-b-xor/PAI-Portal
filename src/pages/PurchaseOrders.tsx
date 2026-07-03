@@ -90,7 +90,7 @@ const MODULE_TABS: Record<PurchaseOrdersModuleVariant, Array<{ label: string; va
     { label: 'ALL OPEN PO', value: 0 },
   ],
   'supplier-collaboration': [
-    { label: 'EXCEPTIONS & ALERTS', value: 3 },
+    { label: 'ALERTS', value: 3 },
     { label: 'ACTION REQUIRED', value: 2 },
     { label: 'ALL OPEN PO', value: 0 },
   ],
@@ -1360,7 +1360,7 @@ const handleSearchChange = useCallback(
       },
       {
         field: 'updated_quantity',
-        headerName: 'Supplier Confirmed QTY',
+        headerName: 'Revised QTY',
         width: 150,
         renderCell: (params) =>
           hasCellValue(params.value) ? (
@@ -1386,7 +1386,7 @@ const handleSearchChange = useCallback(
               fontWeight: 600,
             }}
           >
-            Supplier Confirmed QTY
+            Revised QTY
           </Typography>
         ),
       },
@@ -1718,7 +1718,7 @@ const handleSearchChange = useCallback(
       },
       {
         field: 'updated_quantity',
-        headerName: 'Supplier Confirmed Qty',
+        headerName: 'Revised Qty',
         width: 130,
         renderCell: (params) =>
           hasCellValue(params.value) ? (
@@ -1744,7 +1744,7 @@ const handleSearchChange = useCallback(
               fontWeight: 600,
             }}
           >
-            Supplier Confirmed Qty
+            Revised Qty
           </Typography>
         ),
       },

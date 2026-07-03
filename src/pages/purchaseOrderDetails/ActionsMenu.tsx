@@ -46,8 +46,8 @@ const ActionsMenu: React.FC<ActionsMenuProps> = ({ role, anchorEl, lineStatus, o
           <MenuItem onClick={() => { onClose(); onOpenDialog('RAISE_CONCESSION'); }}><Stack direction="row" alignItems="center" spacing={1.5}><TrendingUp fontSize="small" /><Typography variant="body2">Raise Concession</Typography></Stack></MenuItem>
           <Divider />
           <MenuItem onClick={() => { onClose(); onOpenDialog('UPLOAD_DOCUMENT'); }}><Stack direction="row" alignItems="center" spacing={1.5}><Upload fontSize="small" /><Typography variant="body2">Upload Document</Typography></Stack></MenuItem>
-          <Divider />
-          <MenuItem onClick={() => { onClose(); onOpenDialog('SPLIT'); }}><Stack direction="row" alignItems="center" spacing={1.5}><CallSplit fontSize="small" /><Typography variant="body2">Split</Typography></Stack></MenuItem>
+          {/* <Divider /> */}
+          {/* <MenuItem onClick={() => { onClose(); onOpenDialog('SPLIT'); }}><Stack direction="row" alignItems="center" spacing={1.5}><CallSplit fontSize="small" /><Typography variant="body2">Split</Typography></Stack></MenuItem> */}
           <Divider />
           <MenuItem onClick={() => { onClose(); onOpenDialog('ACKNOWLEDGE'); }}><Stack direction="row" alignItems="center" spacing={1.5}><CheckCircle fontSize="small" /><Typography variant="body2">Acknowledge</Typography></Stack></MenuItem>
         </>
@@ -56,8 +56,8 @@ const ActionsMenu: React.FC<ActionsMenuProps> = ({ role, anchorEl, lineStatus, o
           <MenuItem onClick={() => { onClose(); onOpenDialog('MOVE_IN'); }}><Stack direction="row" alignItems="center" spacing={1.5}><ArrowBack fontSize="small" /><Typography variant="body2">Move in</Typography></Stack></MenuItem>
           <Divider />
           <MenuItem onClick={() => { onClose(); onOpenDialog('MOVE_OUT'); }}><Stack direction="row" alignItems="center" spacing={1.5}><ArrowForward fontSize="small" /><Typography variant="body2">Move out</Typography></Stack></MenuItem>
-          <Divider />
-          <MenuItem onClick={() => { onClose(); onOpenDialog('SPLIT'); }}><Stack direction="row" alignItems="center" spacing={1.5}><CallSplit fontSize="small" /><Typography variant="body2">Split</Typography></Stack></MenuItem>
+          {/* <Divider /> */}
+          {/* <MenuItem onClick={() => { onClose(); onOpenDialog('SPLIT'); }}><Stack direction="row" alignItems="center" spacing={1.5}><CallSplit fontSize="small" /><Typography variant="body2">Split</Typography></Stack></MenuItem> */}
           <Divider />
           <MenuItem onClick={() => { onClose(); onOpenDialog('HOLD'); }}><Stack direction="row" alignItems="center" spacing={1.5}><InfoOutlined fontSize="small" /><Typography variant="body2">Hold</Typography></Stack></MenuItem>
           <Divider />
