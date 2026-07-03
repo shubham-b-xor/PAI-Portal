@@ -112,6 +112,7 @@ const ACTION_LABELS: Record<string, string> = {
   MOVE_OUT: 'Move out',
   SPLIT: 'Split',
   HOLD: 'Hold',
+  UNHOLD: 'Unhold',
   REJECT: 'Reject',
   ACCEPT: 'Accept',
   ACKNOWLEDGE: 'Acknowledge',
@@ -126,6 +127,7 @@ const ACTION_ICONS: Record<string, React.ReactNode> = {
   MOVE_OUT: <SwapHorizIcon fontSize="small" />,
   SPLIT: <CallSplitIcon fontSize="small" />,
   HOLD: <WarningAmberIcon fontSize="small" />,
+  UNHOLD: <CheckCircleOutlineIcon fontSize="small" />,
   REJECT: <CancelOutlinedIcon fontSize="small" />,
   ACCEPT: <CheckCircleOutlineIcon fontSize="small" />,
   NEED_MORE_INFORMATION: <InfoOutlinedIcon fontSize="small" />,
@@ -209,7 +211,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
     };
 
     void loadDocumentTags();
-  }, []);
+  }, [user?.role]);
 
   // Filter states
   const [searchInput, setSearchInput] = useState('');
@@ -533,13 +535,20 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
     navigate(`/purchase-orders/${poId}${moduleQuery}`);
   };
 
-  const getCurrentTabActions = useCallback((): string[] => {
+  const getCurrentTabActions = useCallback((row?: LineItemTabRow): string[] => {
+    const rowStatus = String(row?.line_status || row?.status || '').toUpperCase();
+    if (rowStatus.includes('HOLD')) {
+      // Suppliers should not be able to unhold or perform actions on held lines
+      if (user?.role === 'SUPPLIER') return [];
+      return ['UNHOLD'];
+    }
+
     if (isSupplierCollaborationMode) {
       if (selectedTab === 3) {
         return ['PROPOSE_CHANGE', 'RAISE_CONCESSION', 'UPLOAD_DOCUMENT', 'SPLIT', 'ACKNOWLEDGE'];
       }
       if (selectedTab === 2) {
-        return ['ACKNOWLEDGE', 'PROPOSE_CHANGE', 'UPLOAD_DOCUMENT', 'HOLD'];
+        return ['PROPOSE_CHANGE', 'RAISE_CONCESSION', 'UPLOAD_DOCUMENT', 'SPLIT', 'ACKNOWLEDGE'];
       }
       return ['ACKNOWLEDGE', 'PROPOSE_CHANGE', 'RAISE_CONCESSION', 'UPLOAD_DOCUMENT', 'SPLIT', 'HOLD'];
     }
@@ -572,6 +581,13 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
 
   const openActionMenu = useCallback((event: React.MouseEvent<HTMLElement>, row: LineItemTabRow) => {
     event.stopPropagation();
+    const rowStatus = String(row?.line_status || row?.status || '').toUpperCase();
+    const isHold = rowStatus.includes('HOLD');
+    if (isHold && user?.role === 'SUPPLIER') {
+      // prevent suppliers from opening the action menu on held rows
+      return;
+    }
+
     setSelectedActionRow(row);
     setActionAnchorEl(event.currentTarget);
   }, []);
@@ -595,6 +611,11 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
   }, []);
 
   const openDialogForAction = useCallback((action: string) => {
+    if (String(action).toUpperCase() === 'UNHOLD' && String(user?.role || '').toUpperCase() === 'SUPPLIER') {
+      // prevent suppliers from opening Unhold dialog
+      closeActionMenu();
+      return;
+    }
     closeActionMenu();
     setDialogNote('');
     if (action === 'PROPOSE_CHANGE') {
@@ -625,11 +646,11 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
       return;
     }
     setActiveDialog(action as DialogType);
-  }, [closeActionMenu, selectedActionRow]);
+  }, [closeActionMenu, selectedActionRow, user?.role]);
 
   const resolveActionLineId = useCallback(async (row: LineItemTabRow): Promise<string | null> => {
     const existingLineId = String(row.line_id || row.id || '').trim();
-    if (existingLineId && String(row.po_id || '').trim()) {
+    if (existingLineId) {
       return existingLineId;
     }
 
@@ -677,7 +698,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
     [selectedActionRow, resolveActionLineId, fetchPurchaseOrders, closeDialog]
   );
 
-  const submitSimpleAction = useCallback(async (action: 'HOLD' | 'ACCEPT' | 'ACKNOWLEDGE' | 'REJECT' | 'NEED_MORE_INFORMATION') => {
+  const submitSimpleAction = useCallback(async (action: 'HOLD' | 'UNHOLD' | 'ACCEPT' | 'ACKNOWLEDGE' | 'REJECT' | 'NEED_MORE_INFORMATION') => {
     try {
       setError(null);
       await executeRowAction(action, { notes: dialogNote });
@@ -1541,7 +1562,7 @@ const handleSearchChange = useCallback(
         },
       },
       {
-        field: 'status',
+        field: 'line_status',
         headerName: 'Status',
         width: 120,
         renderCell: (params) => (
@@ -1559,14 +1580,30 @@ const handleSearchChange = useCallback(
         width: 75,
         sortable: false,
         filterable: false,
-        renderCell: (params) => (
-          <IconButton
-            size="small"
-            onClick={(event) => openActionMenu(event, params.row as LineItemTabRow)}
-          >
-            <MoreVertIcon fontSize="small" />
-          </IconButton>
-        ),
+        renderCell: (params) => {
+          const row = params.row as LineItemTabRow;
+          const isHold = String((row?.line_status || row?.status || '')).toUpperCase().includes('HOLD');
+          if (isHold && user?.role === 'SUPPLIER') {
+            return (
+              <Tooltip title="Actions disabled while on hold">
+                <span>
+                  <IconButton size="small" disabled>
+                    <MoreVertIcon fontSize="small" />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            );
+          }
+
+          return (
+            <IconButton
+              size="small"
+              onClick={(event) => openActionMenu(event, params.row as LineItemTabRow)}
+            >
+              <MoreVertIcon fontSize="small" />
+            </IconButton>
+          );
+        },
       },
     ],
     [pinnedPOToReviewLineItemIds, togglePOToReviewLinePin, theme, statusColors, openActionMenu]
@@ -1813,7 +1850,7 @@ const handleSearchChange = useCallback(
           ),
       },
       {
-        field: 'status',
+        field: 'line_status',
         headerName: 'Status',
         width: 130,
         renderCell: (params) => {
@@ -1834,14 +1871,30 @@ const handleSearchChange = useCallback(
         width: 70,
         sortable: false,
         filterable: false,
-        renderCell: (params) => (
-          <IconButton
-            size="small"
-            onClick={(event) => openActionMenu(event, params.row as LineItemTabRow)}
-          >
-            <MoreVertIcon fontSize="small" />
-          </IconButton>
-        ),
+        renderCell: (params) => {
+          const row = params.row as LineItemTabRow;
+          const isHold = String((row?.line_status || row?.status || '')).toUpperCase().includes('HOLD');
+          if (isHold && user?.role === 'SUPPLIER') {
+            return (
+              <Tooltip title="Actions disabled while on hold">
+                <span>
+                  <IconButton size="small" disabled>
+                    <MoreVertIcon fontSize="small" />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            );
+          }
+
+          return (
+            <IconButton
+              size="small"
+              onClick={(event) => openActionMenu(event, params.row as LineItemTabRow)}
+            >
+              <MoreVertIcon fontSize="small" />
+            </IconButton>
+          );
+        },
       },
     ],
     [pinnedPOToReviewLineItemIds, togglePOToReviewLinePin, theme, statusColors, openActionMenu]
@@ -2108,7 +2161,7 @@ const handleSearchChange = useCallback(
   ),
      },
      {
-       field: 'status',
+       field: 'line_status',
        headerName: 'PO Status',
        width: 130,
        renderCell: (params) => (
@@ -2145,14 +2198,30 @@ const handleSearchChange = useCallback(
        width: 75,
        sortable: false,
        filterable: false,
-       renderCell: (params) => (
-         <IconButton
-           size="small"
-           onClick={(event) => openActionMenu(event, params.row as LineItemTabRow)}
-         >
-           <MoreVertIcon fontSize="small" />
-         </IconButton>
-       ),
+      renderCell: (params) => {
+        const row = params.row as LineItemTabRow;
+        const isHold = String((row?.line_status || row?.status || '')).toUpperCase().includes('HOLD');
+        if (isHold && user?.role === 'SUPPLIER') {
+          return (
+            <Tooltip title="Actions disabled while on hold">
+              <span>
+                <IconButton size="small" disabled>
+                  <MoreVertIcon fontSize="small" />
+                </IconButton>
+              </span>
+            </Tooltip>
+          );
+        }
+
+        return (
+          <IconButton
+            size="small"
+            onClick={(event) => openActionMenu(event, params.row as LineItemTabRow)}
+          >
+            <MoreVertIcon fontSize="small" />
+          </IconButton>
+        );
+      },
      },
    ],
    [
@@ -2926,17 +2995,27 @@ const handleSearchChange = useCallback(
       </Dialog>
 
       <Menu anchorEl={actionAnchorEl} open={Boolean(actionAnchorEl)} onClose={closeActionMenu}>
-        {getCurrentTabActions().map((action) => (
-          <ActionMenuItem key={action} onClick={() => openDialogForAction(action)}>
-            <ListItemIcon sx={{ minWidth: 28 }}>
-              {ACTION_ICONS[action] || <InfoOutlinedIcon fontSize="small" />}
-            </ListItemIcon>
-            <ListItemText
-              primary={ACTION_LABELS[action] || action}
-              primaryTypographyProps={{ fontSize: 12 }}
-            />
-          </ActionMenuItem>
-        ))}
+        {(() => {
+          const actions = getCurrentTabActions(selectedActionRow || undefined) || [];
+          const filtered = actions.filter((a) => {
+            if (String(a).toUpperCase() === 'UNHOLD' && String(user?.role || '').toUpperCase() === 'SUPPLIER') {
+              return false;
+            }
+            return true;
+          });
+
+          return filtered.map((action) => (
+            <ActionMenuItem key={action} onClick={() => openDialogForAction(action)}>
+              <ListItemIcon sx={{ minWidth: 28 }}>
+                {ACTION_ICONS[action] || <InfoOutlinedIcon fontSize="small" />}
+              </ListItemIcon>
+              <ListItemText
+                primary={ACTION_LABELS[action] || action}
+                primaryTypographyProps={{ fontSize: 12 }}
+              />
+            </ActionMenuItem>
+          ));
+        })()}
       </Menu>
 
       <Dialog
@@ -3032,6 +3111,21 @@ const handleSearchChange = useCallback(
         onNoteChange={setDialogNote}
         onClose={closeDialog}
         onSubmit={() => void submitSimpleAction('HOLD')}
+      />
+
+      <SimpleInfoDialog
+        open={activeDialog === 'UNHOLD'}
+        title="Unhold"
+        submitLabel="Submit Unhold Request"
+        poNumber={String(selectedActionRow?.po_number || '')}
+        lineId={String(selectedActionRow?.line_number || selectedActionRow?.line_id || '--')}
+        materialCode={String(selectedActionRow?.material_code || '')}
+        quantity={Number(selectedActionRow?.quantity || 0)}
+        deliveryDate={String(selectedActionRow?.required_in_house_date || '')}
+        note={dialogNote}
+        onNoteChange={setDialogNote}
+        onClose={closeDialog}
+        onSubmit={() => void submitSimpleAction('UNHOLD')}
       />
 
       <SimpleInfoDialog

@@ -7,12 +7,40 @@ import { isSupplierRole } from './utils';
 type ActionsMenuProps = {
   role?: string;
   anchorEl: HTMLElement | null;
+  lineStatus?: string;
   onClose: () => void;
   onOpenDialog: (action: string) => void;
 };
 
-const ActionsMenu: React.FC<ActionsMenuProps> = ({ role, anchorEl, onClose, onOpenDialog }) => {
+const ActionsMenu: React.FC<ActionsMenuProps> = ({ role, anchorEl, lineStatus, onClose, onOpenDialog }) => {
   const supplier = isSupplierRole(role);
+  const isHoldLine = String(lineStatus || '').toUpperCase().includes('HOLD');
+
+  const unholdAction = (
+    <MenuItem onClick={() => { onClose(); onOpenDialog('UNHOLD'); }}>
+      <Stack direction="row" alignItems="center" spacing={1.5}>
+        <InfoOutlined fontSize="small" />
+        <Typography variant="body2">Unhold</Typography>
+      </Stack>
+    </MenuItem>
+  );
+
+  if (isHoldLine) {
+    return (
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
+        {supplier ? (
+          <MenuItem disabled>
+            <Stack direction="row" alignItems="center" spacing={1.5}>
+              <InfoOutlined fontSize="small" />
+              <Typography variant="body2">Unhold</Typography>
+            </Stack>
+          </MenuItem>
+        ) : (
+          unholdAction
+        )}
+      </Menu>
+    );
+  }
 
   return (
     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>

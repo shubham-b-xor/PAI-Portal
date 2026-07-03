@@ -108,7 +108,7 @@ const RaiseConcessionDialog: React.FC<RaiseConcessionDialogProps> = ({
             <Typography variant="body2">
               <Typography component="span" color="primary">Link</Typography> or drag and drop
             </Typography>
-            <Typography variant="caption" color="text.secondary">SVG, PNG, JPG or GIF (max. 3MB)</Typography>
+            <Typography variant="caption" color="text.secondary">PDF, DOC, Excel, PNG, JPG or Zip (max. 3MB)</Typography>
             <Button component="label" variant="outlined" size="small">
               Choose File
               <input hidden type="file" onChange={(e) => onUploadFileChange(e.target.files?.[0] || null)} />

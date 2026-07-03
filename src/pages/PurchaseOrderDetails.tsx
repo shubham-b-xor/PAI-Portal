@@ -329,6 +329,14 @@ const PurchaseOrderDetails: React.FC = () => {
       setSelectedDocumentTag(documentTags.includes('CONCESSION') ? 'CONCESSION' : (documentTags[0] || 'LINE_ITEM'));
       return setActiveDialog('RAISE_CONCESSION');
     }
+    if (normalized === 'UNHOLD') {
+      setSelectedLine(primaryLine);
+      setDialogNote('');
+      if (supplier) {
+        return setActiveDialog('NONE');
+      }
+      return setActiveDialog('UNHOLD');
+    }
     if (normalized === 'HOLD' || normalized === 'ACCEPT' || normalized === 'ACKNOWLEDGE') {
       setSelectedLine(primaryLine);
       setDialogNote('');
@@ -479,7 +487,7 @@ const PurchaseOrderDetails: React.FC = () => {
     }
   };
 
-  const submitSimpleLineAction = async (action: 'HOLD' | 'ACCEPT' | 'ACKNOWLEDGE' | 'REJECT' | 'NEED_MORE_INFORMATION') => {
+  const submitSimpleLineAction = async (action: 'HOLD' | 'UNHOLD' | 'ACCEPT' | 'ACKNOWLEDGE' | 'REJECT' | 'NEED_MORE_INFORMATION') => {
     try {
       setError(null);
       if (selectedDocument && (action === 'ACCEPT' || action === 'REJECT' || action === 'NEED_MORE_INFORMATION')) {
@@ -787,6 +795,8 @@ const PurchaseOrderDetails: React.FC = () => {
       <ActionsMenu
         role={role}
         anchorEl={menuAnchorEl}
+        lineStatus={selectedLine?.line_status}
+        //lineStatus={selectedLine?.line_status}
         onClose={closeMenu}
         onOpenDialog={openDialogForAction}
       />
@@ -829,6 +839,20 @@ const PurchaseOrderDetails: React.FC = () => {
         onNoteChange={setDialogNote}
         onClose={closeDialog}
         onSubmit={() => void submitSimpleLineAction('HOLD')}
+      />
+
+      <SimpleInfoDialog
+        open={activeDialog === 'UNHOLD'}
+        title="Unhold"
+        submitLabel="Submit Unhold Request"
+        lineId={formatLineId(selectedLine || undefined)}
+        materialCode={selectedLine?.material_code}
+        quantity={selectedLine?.quantity}
+        deliveryDate={selectedLine?.required_in_house_date}
+        note={dialogNote}
+        onNoteChange={setDialogNote}
+        onClose={closeDialog}
+        onSubmit={() => void submitSimpleLineAction('UNHOLD')}
       />
 
       <SimpleInfoDialog

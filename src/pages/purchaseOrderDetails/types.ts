@@ -33,6 +33,7 @@ export type DialogType =
   | 'SPLIT'
   | 'REJECT'
   | 'HOLD'
+  | 'UNHOLD'
   | 'ACCEPT'
   | 'ACKNOWLEDGE'
   | 'NEED_MORE_INFORMATION'
