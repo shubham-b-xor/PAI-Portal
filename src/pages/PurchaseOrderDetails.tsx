@@ -285,6 +285,11 @@ const PurchaseOrderDetails: React.FC = () => {
   const openMenu = (event: React.MouseEvent<HTMLElement>, line: LineItem) => {
     const selectedId = formatLineId(line);
     const matchedLine = lineItems.find((item) => formatLineId(item) === selectedId) || line;
+    const isHoldLine = String((matchedLine?.line_status || '')).toUpperCase().includes('HOLD');
+
+    if (supplier && isHoldLine) {
+      return;
+    }
 
     setError(null);
     setIsPOLevelAction(false);
@@ -651,6 +656,7 @@ const PurchaseOrderDetails: React.FC = () => {
         pinnedLineIds,
         toggleLinePin,
         openMenu,
+        role,
         highlightNeedByDate: supplier || isSupplierCollaborationContext,
         onSupplierConfirmationClick: (line) =>
           navigate(`/purchase-orders/${id}/line-items/${formatLineId(line)}?module=${moduleContext}`),
@@ -663,7 +669,7 @@ const PurchaseOrderDetails: React.FC = () => {
           setActiveTab(3);
         },
       }),
-    [pinnedLineIds, toggleLinePin, supplier, isSupplierCollaborationContext, isCockpitContext, navigate, id, moduleContext]
+    [pinnedLineIds, toggleLinePin, role, supplier, isSupplierCollaborationContext, isCockpitContext, navigate, id, moduleContext]
   );
 
   const supplierLineColumns: GridColDef[] = useMemo(

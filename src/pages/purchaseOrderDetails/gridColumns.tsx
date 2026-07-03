@@ -12,6 +12,7 @@ type LineColumnOptions = {
   pinnedLineIds: string[];
   toggleLinePin: (lineId: string) => void;
   openMenu: (event: React.MouseEvent<HTMLElement>, line: LineItem) => void;
+  role?: string;
   highlightNeedByDate?: boolean;
   onConcessionClick?: (line: LineItem) => void;
   onSupplierConfirmationClick?: (line: LineItem) => void;
@@ -29,6 +30,7 @@ export const buildLineColumns = ({
   pinnedLineIds,
   toggleLinePin,
   openMenu,
+  role,
   highlightNeedByDate = false,
   onConcessionClick,
   onSupplierConfirmationClick,
@@ -374,14 +376,31 @@ export const buildLineColumns = ({
       width: 58,
       sortable: false,
       filterable: false,
-      renderCell: (params: GridRenderCellParams<LineItem>) => (
-        <IconButton
-          size="small"
-          onClick={(e) => openMenu(e, params.row)}
-        >
-          <MoreVert fontSize="small" />
-        </IconButton>
-      ),
+      renderCell: (params: GridRenderCellParams<LineItem>) => {
+        const row = params.row;
+        const isHold = String((row?.line_status || row?.status || '')).toUpperCase().includes('HOLD');
+        const supplier = isSupplierRole(role);
+        if (isHold && supplier) {
+          return (
+            <Tooltip title="Actions disabled while on hold">
+              <span>
+                <IconButton size="small" disabled>
+                  <MoreVert fontSize="small" />
+                </IconButton>
+              </span>
+            </Tooltip>
+          );
+        }
+
+        return (
+          <IconButton
+            size="small"
+            onClick={(e) => openMenu(e, params.row)}
+          >
+            <MoreVert fontSize="small" />
+          </IconButton>
+        );
+      },
     },
   ];
 };
