@@ -28,7 +28,16 @@ const ActionsMenu: React.FC<ActionsMenuProps> = ({ role, anchorEl, lineStatus, o
   if (isHoldLine) {
     return (
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={onClose}>
-        {unholdAction}
+        {supplier ? (
+          <MenuItem disabled>
+            <Stack direction="row" alignItems="center" spacing={1.5}>
+              <InfoOutlined fontSize="small" />
+              <Typography variant="body2">Unhold</Typography>
+            </Stack>
+          </MenuItem>
+        ) : (
+          unholdAction
+        )}
       </Menu>
     );
   }

@@ -211,7 +211,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
     };
 
     void loadDocumentTags();
-  }, []);
+  }, [user?.role]);
 
   // Filter states
   const [searchInput, setSearchInput] = useState('');
@@ -536,7 +536,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
   };
 
   const getCurrentTabActions = useCallback((row?: LineItemTabRow): string[] => {
-    const rowStatus = String(row?.line_status || '').toUpperCase();
+    const rowStatus = String(row?.line_status || row?.status || '').toUpperCase();
     if (rowStatus.includes('HOLD')) {
       // Suppliers should not be able to unhold or perform actions on held lines
       if (user?.role === 'SUPPLIER') return [];
@@ -581,6 +581,13 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
 
   const openActionMenu = useCallback((event: React.MouseEvent<HTMLElement>, row: LineItemTabRow) => {
     event.stopPropagation();
+    const rowStatus = String(row?.line_status || row?.status || '').toUpperCase();
+    const isHold = rowStatus.includes('HOLD');
+    if (isHold && user?.role === 'SUPPLIER') {
+      // prevent suppliers from opening the action menu on held rows
+      return;
+    }
+
     setSelectedActionRow(row);
     setActionAnchorEl(event.currentTarget);
   }, []);
@@ -604,6 +611,11 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
   }, []);
 
   const openDialogForAction = useCallback((action: string) => {
+    if (String(action).toUpperCase() === 'UNHOLD' && String(user?.role || '').toUpperCase() === 'SUPPLIER') {
+      // prevent suppliers from opening Unhold dialog
+      closeActionMenu();
+      return;
+    }
     closeActionMenu();
     setDialogNote('');
     if (action === 'PROPOSE_CHANGE') {
@@ -634,7 +646,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
       return;
     }
     setActiveDialog(action as DialogType);
-  }, [closeActionMenu, selectedActionRow]);
+  }, [closeActionMenu, selectedActionRow, user?.role]);
 
   const resolveActionLineId = useCallback(async (row: LineItemTabRow): Promise<string | null> => {
     const existingLineId = String(row.line_id || row.id || '').trim();

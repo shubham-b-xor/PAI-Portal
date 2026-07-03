@@ -332,6 +332,9 @@ const PurchaseOrderDetails: React.FC = () => {
     if (normalized === 'UNHOLD') {
       setSelectedLine(primaryLine);
       setDialogNote('');
+      if (supplier) {
+        return setActiveDialog('NONE');
+      }
       return setActiveDialog('UNHOLD');
     }
     if (normalized === 'HOLD' || normalized === 'ACCEPT' || normalized === 'ACKNOWLEDGE') {
