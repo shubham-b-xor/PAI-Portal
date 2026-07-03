@@ -152,7 +152,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
 
     return MODULE_TABS[moduleVariant];
   }, [moduleVariant, isDefaultSupplierView]);
-  const defaultTab = moduleTabs[2]?.value ?? 2;
+  const defaultTab = moduleTabs[3]?.value ?? 3;
   const isSupplierCollaboration = isSupplierCollaborationMode;
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
