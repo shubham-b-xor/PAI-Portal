@@ -17,6 +17,24 @@ type HistoryTabProps = {
 };
 
 const HistoryTab: React.FC<HistoryTabProps> = ({ historyRows }) => {
+
+  const formatDateTime = (date?: string) => {
+    if (!date) return '-';
+
+    const parsedDate = new Date(date);
+
+    if (isNaN(parsedDate.getTime())) return date;
+
+    return parsedDate.toLocaleString('en-GB', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
+
   return (
     <Stack spacing={1.5} p={2}>
       {historyRows.length === 0 ? <Alert severity="info">No history yet.</Alert> : null}
@@ -80,7 +98,7 @@ const HistoryTab: React.FC<HistoryTabProps> = ({ historyRows }) => {
                         color="text.secondary"
                         sx={{ textAlign: 'right', whiteSpace: 'nowrap' }}
                       >
-                        {row.created_at || row.timestamp || '-'}
+                        {formatDateTime(row.created_at || row.timestamp)}
                       </Typography>
                     </Stack>
                   </Stack>

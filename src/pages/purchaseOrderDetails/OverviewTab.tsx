@@ -47,7 +47,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ po }) => {
       <Paper variant="outlined" sx={{ p: 2 }}>
         <Typography variant="subtitle2" sx={{ mb: 1.5 }}>Shipment Details</Typography>
         <Grid container rowSpacing={2} columnSpacing={3}>
-          <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Address</Typography><Typography variant="body2">{po.po_details?.shipment_details?.address || 'TOOLING FLOWSERVE S DE RL DE CY CALLE ESMERALDA #25 90184 SANTA ISABEL, Mexico'}</Typography></Grid>
+          <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Address</Typography><Typography variant="body2">{po.po_details?.shipment_details?.address || 'Tooling Flowserve S. de R.L. de C.V., Calle Esmeralda #25, 90184 Santa Isabel, Mexico'}</Typography></Grid>
           <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Incoterm</Typography><Typography variant="body2">{po.incoterm || 'FCA'}</Typography></Grid>
           <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Incoterm Name Location</Typography><Typography variant="body2">{po.incoterm_named_place || 'SELLER FACILITY'}</Typography></Grid>
           <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Phone</Typography><Typography variant="body2">{po.po_details?.buyer_details?.telephone || '021325698'}</Typography></Grid>
@@ -57,7 +57,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ po }) => {
       <Paper variant="outlined" sx={{ p: 2 }}>
         <Typography variant="subtitle2" sx={{ mb: 1.5 }}>Billing Details</Typography>
         <Grid container rowSpacing={2} columnSpacing={3}>
-          <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Bill To Address</Typography><Typography variant="body2">{po.po_details?.billing_details?.bill_to_address || 'FLOWSERVE S DE RL DE CY VIA MORELOS 437 SANTA CLARA COLON COLON 65560 ECATEPEC DE MORELOS Mexico'}</Typography></Grid>
+          <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Bill To Address</Typography><Typography variant="body2">{po.po_details?.billing_details?.bill_to_address || 'Flowserve S. de R.L. de C.V., Vía Morelos 437, Santa Clara, Colón, 65560 Ecatepec de Morelos, Mexico'}</Typography></Grid>
           <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Send Invoice to</Typography><Typography variant="body2">{po.procurement_specialist_id || '-'}</Typography></Grid>
           <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Payment Terms</Typography><Typography variant="body2">{po.payment_terms ? (po.payment_terms === 'P012' ? 'Net 60 days' : po.payment_terms) : 'Net 60 days'}</Typography></Grid>
           <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Currency</Typography><Typography variant="body2">{po.currency || '-'}</Typography></Grid>

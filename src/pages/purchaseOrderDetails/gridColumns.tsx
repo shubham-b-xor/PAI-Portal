@@ -147,7 +147,7 @@ export const buildLineColumns = ({
     },
     {
       field: 'supplier_confirmed_quantity',
-      headerName: 'Supplier Confirmed Qty',
+      headerName: 'Revised Qty',
       width: 120,
       type: 'number',
       align: 'center',
@@ -163,7 +163,7 @@ export const buildLineColumns = ({
                     fontWeight: 600,
                   }}
                 >
-                  Supplier Confirmed Qty
+                  Revised Qty
                 </Typography>
               ),
     },
@@ -215,12 +215,27 @@ export const buildLineColumns = ({
     {
       field: 'updated_net_value',
       headerName: 'Updated Total Value',
-      width: 60,
+      width: 90,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant="body2" color="primary.main">
           {params.value ?? '--'}
         </Typography>
       ),
+            renderHeader: () => (
+                <Typography
+                  variant="body2"
+                  textAlign="center"
+                  sx={{
+                    whiteSpace: 'normal',
+                    lineHeight: 1.2,
+                    fontWeight: 600,
+                  }}
+                >
+                 Updated Total Value
+                </Typography>
+              ),
+      
+      
     },
     {
       field: 'updated_total',
@@ -378,7 +393,7 @@ export const buildLineColumns = ({
       filterable: false,
       renderCell: (params: GridRenderCellParams<LineItem>) => {
         const row = params.row;
-        const isHold = String((row?.line_status || row?.status || '')).toUpperCase().includes('HOLD');
+        const isHold = String((row?.line_status || '')).toUpperCase().includes('HOLD');
         const supplier = isSupplierRole(role);
         if (isHold && supplier) {
           return (
