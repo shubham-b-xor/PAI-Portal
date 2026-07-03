@@ -34,7 +34,7 @@ const Signup: React.FC = () => {
   useEffect(() => {
     // Check if already authenticated on component mount
     if (isAuthenticated && !isLoading) {
-      navigate('/dashboard', { replace: true });
+      navigate('/purchase-orders', { replace: true });
     }
   }, []);
 
@@ -68,7 +68,7 @@ const Signup: React.FC = () => {
       const { confirmPassword, ...signupData } = formData;
       const result = await supplierSignup(signupData);
       if (result.type.includes('fulfilled')) {
-        navigate('/dashboard', { replace: true });
+        navigate('/purchase-orders', { replace: true });
       }
     } catch (err) {
       console.error('Signup failed:', err);

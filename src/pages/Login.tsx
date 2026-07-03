@@ -28,7 +28,7 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const from = (location.state as any)?.from?.pathname || '/dashboard';
+  const from = (location.state as any)?.from?.pathname || '/purchase-orders';
 
   useEffect(() => {
     // Check if already authenticated on component mount
