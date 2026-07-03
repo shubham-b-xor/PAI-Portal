@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Chip, Grid, Paper, Stack, Typography } from '@mui/material';
+import { Avatar, Grid, Paper, Stack, Typography } from '@mui/material';
 import { PurchaseOrder } from '@/models';
 import {
   formatDateForDisplay,

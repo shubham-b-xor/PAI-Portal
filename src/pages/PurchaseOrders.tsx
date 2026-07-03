@@ -1548,7 +1548,7 @@ const handleSearchChange = useCallback(
         },
       },
       {
-        field: 'status',
+        field: 'line_status',
         headerName: 'Status',
         width: 120,
         renderCell: (params) => (
@@ -1820,7 +1820,7 @@ const handleSearchChange = useCallback(
           ),
       },
       {
-        field: 'status',
+        field: 'line_status',
         headerName: 'Status',
         width: 130,
         renderCell: (params) => {
@@ -2115,7 +2115,7 @@ const handleSearchChange = useCallback(
   ),
      },
      {
-       field: 'status',
+       field: 'line_status',
        headerName: 'PO Status',
        width: 130,
        renderCell: (params) => (
