@@ -40,7 +40,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ po }) => {
           <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Supplier Name</Typography><Typography variant="body2">{po.supplier_name || 'Simon Rodriguez'}</Typography></Grid>
           <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Email</Typography><Typography variant="body2">{po.supplier_email || po.po_details?.supplier_details?.email || '-'}</Typography></Grid>
           <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Phone</Typography><Typography variant="body2">{po.po_details?.buyer_details?.telephone || (po as any).supplier_phone || '021325698'}</Typography></Grid>
-          <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Address</Typography><Typography variant="body2">{po.supplier_address || '-'}</Typography></Grid>
+          <Grid item xs={12} sm={6} md={3}><Typography variant="caption" color="text.secondary">Address</Typography><Typography variant="body2">{po.supplier_address || '166 Industrial Supply Way, Monterrey, NL 64000, MX'}</Typography></Grid>
         </Grid>
       </Paper>
 

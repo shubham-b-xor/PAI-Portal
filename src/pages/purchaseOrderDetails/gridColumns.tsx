@@ -378,9 +378,6 @@ export const buildLineColumns = ({
         <IconButton
           size="small"
           onClick={(e) => openMenu(e, params.row)}
-          disabled={String(params.row.line_status || '')
-            .toUpperCase()
-            .includes('HOLD')}
         >
           <MoreVert fontSize="small" />
         </IconButton>

@@ -112,6 +112,7 @@ const ACTION_LABELS: Record<string, string> = {
   MOVE_OUT: 'Move out',
   SPLIT: 'Split',
   HOLD: 'Hold',
+  UNHOLD: 'Unhold',
   REJECT: 'Reject',
   ACCEPT: 'Accept',
   ACKNOWLEDGE: 'Acknowledge',
@@ -126,6 +127,7 @@ const ACTION_ICONS: Record<string, React.ReactNode> = {
   MOVE_OUT: <SwapHorizIcon fontSize="small" />,
   SPLIT: <CallSplitIcon fontSize="small" />,
   HOLD: <WarningAmberIcon fontSize="small" />,
+  UNHOLD: <CheckCircleOutlineIcon fontSize="small" />,
   REJECT: <CancelOutlinedIcon fontSize="small" />,
   ACCEPT: <CheckCircleOutlineIcon fontSize="small" />,
   NEED_MORE_INFORMATION: <InfoOutlinedIcon fontSize="small" />,
@@ -533,13 +535,18 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
     navigate(`/purchase-orders/${poId}${moduleQuery}`);
   };
 
-  const getCurrentTabActions = useCallback((): string[] => {
+  const getCurrentTabActions = useCallback((row?: LineItemTabRow): string[] => {
+    const rowStatus = String(row?.line_status || '').toUpperCase();
+    if (rowStatus.includes('HOLD')) {
+      return ['UNHOLD'];
+    }
+
     if (isSupplierCollaborationMode) {
       if (selectedTab === 3) {
         return ['PROPOSE_CHANGE', 'RAISE_CONCESSION', 'UPLOAD_DOCUMENT', 'SPLIT', 'ACKNOWLEDGE'];
       }
       if (selectedTab === 2) {
-        return ['ACKNOWLEDGE', 'PROPOSE_CHANGE', 'UPLOAD_DOCUMENT', 'HOLD'];
+        return ['PROPOSE_CHANGE', 'RAISE_CONCESSION', 'UPLOAD_DOCUMENT', 'SPLIT', 'ACKNOWLEDGE'];
       }
       return ['ACKNOWLEDGE', 'PROPOSE_CHANGE', 'RAISE_CONCESSION', 'UPLOAD_DOCUMENT', 'SPLIT', 'HOLD'];
     }
@@ -677,7 +684,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
     [selectedActionRow, resolveActionLineId, fetchPurchaseOrders, closeDialog]
   );
 
-  const submitSimpleAction = useCallback(async (action: 'HOLD' | 'ACCEPT' | 'ACKNOWLEDGE' | 'REJECT' | 'NEED_MORE_INFORMATION') => {
+  const submitSimpleAction = useCallback(async (action: 'HOLD' | 'UNHOLD' | 'ACCEPT' | 'ACKNOWLEDGE' | 'REJECT' | 'NEED_MORE_INFORMATION') => {
     try {
       setError(null);
       await executeRowAction(action, { notes: dialogNote });
@@ -2926,7 +2933,7 @@ const handleSearchChange = useCallback(
       </Dialog>
 
       <Menu anchorEl={actionAnchorEl} open={Boolean(actionAnchorEl)} onClose={closeActionMenu}>
-        {getCurrentTabActions().map((action) => (
+        {getCurrentTabActions(selectedActionRow).map((action) => (
           <ActionMenuItem key={action} onClick={() => openDialogForAction(action)}>
             <ListItemIcon sx={{ minWidth: 28 }}>
               {ACTION_ICONS[action] || <InfoOutlinedIcon fontSize="small" />}
