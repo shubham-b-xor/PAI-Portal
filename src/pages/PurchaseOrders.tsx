@@ -1061,8 +1061,8 @@ const handleSearchChange = useCallback(
       {
         field: 'po_number',
         headerName: 'PO Number',
-        width: 100,
-
+        minWidth: 100,
+        flex: 1,
         renderCell: (params) => (
           <Typography
             fontWeight="bold"
@@ -1084,7 +1084,8 @@ const handleSearchChange = useCallback(
       {
         field: 'revision_changes',
         headerName: 'Revision Changes',
-        width: 80,
+        minWidth: 80,
+        flex: 1,
         renderHeader: () => (
           <Typography
             variant="body2"
@@ -1102,7 +1103,8 @@ const handleSearchChange = useCallback(
       {
         field: 'line_items',
         headerName: 'Line Items',
-        width: 60,
+        minWidth: 60,
+        flex: 1,
         renderCell: (params) => params.value.length,
         renderHeader: () => (
           <Typography
@@ -1121,21 +1123,24 @@ const handleSearchChange = useCallback(
       {
         field: 'supplier_id',
         headerName: 'Supplier Number',
-        width: 140,
+        minWidth: 140,
+        flex: 1,
       },
       ...(user?.role !== 'SUPPLIER'
         ? [
             {
               field: 'supplier_name',
               headerName: 'Supplier',
-              width: 200,
+              minWidth: 200,
+              flex: 1,
             },
           ]
         : []),
       {
         field: 'total_value',
         headerName: 'Total Value',
-        width: 110,
+        minWidth: 110,
+        flex: 1,
         renderCell: (params) => (
           <Typography height={'100%'} alignContent={'center'} fontSize={'0.8rem'}>
             {params.row.currency} {params.value.toLocaleString()}
@@ -1145,20 +1150,23 @@ const handleSearchChange = useCallback(
       {
         field: 'delivery_date',
         headerName: 'Need by Date',
-        width: 120,
+        minWidth: 120,
+        flex: 1,
         renderCell: (params) => formatDateSafe(params.value),
       },
 
       {
         field: 'site',
         headerName: 'Flowserve site',
-        width: 120,
+        minWidth: 120,
+        flex: 1,
       },
 
       {
         field: 'status',
         headerName: 'Status',
-        width: 100,
+        minWidth: 100,
+        flex: 1,
         renderCell: (params) => (
           <Chip
             variant="outlined"
@@ -1172,7 +1180,8 @@ const handleSearchChange = useCallback(
       {
         field: 'source_system',
         headerName: 'ERP',
-        width: 80,
+        minWidth: 80,
+        flex: 1,
       },
 
       ...(user?.role === 'SUPPLIER'
@@ -1180,7 +1189,8 @@ const handleSearchChange = useCallback(
             {
               field: 'supplier_name',
               headerName: 'Supplier',
-              width: 150,
+              minWidth: 150,
+              flex: 1,
             },
           ]
         : []),
@@ -1209,17 +1219,20 @@ const handleSearchChange = useCallback(
             {
               field: 'buyer_name',
               headerName: 'Buyer Name',
-              width: 150,
+              minWidth: 150,
+              flex: 1,
             },
             {
               field: 'buyer_email',
               headerName: 'Buyer Email',
-              width: 160,
+              minWidth: 160,
+              flex: 1,
             },
             {
               field: 'buyer_phone',
               headerName: 'Buyer Phone No',
-              width: 140,
+              minWidth: 140,
+              flex: 1,
             },
           ]
         : []),
@@ -1228,7 +1241,8 @@ const handleSearchChange = useCallback(
             {
               field: 'site',
               headerName: 'Site',
-              width: 70,
+              minWidth: 70,
+              flex: 1,
             },
           ]
         : []),
