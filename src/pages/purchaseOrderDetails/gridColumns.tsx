@@ -146,7 +146,7 @@ export const buildLineColumns = ({
       headerAlign: 'center',
     },
     {
-      field: 'supplier_confirmed_quantity',
+      field: 'updated_quantity',
       headerName: 'Revised Qty',
       width: 120,
       type: 'number',
@@ -429,6 +429,7 @@ export const buildSupplierLineColumns = (lineColumns: GridColDef[], includeConce
     'description',
     'quantity',
     'updated_quantity',
+    'unit',
     'unit_price',
     'updated_unit_price',
     'net_value',

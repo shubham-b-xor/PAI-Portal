@@ -249,15 +249,15 @@ const LineItemDetails: React.FC = () => {
               <Grid item xs={12} sm={6} md={2}><FieldValue label="Currency" value={po.currency || '--'} /></Grid>
               <Grid item xs={12} sm={6} md={2}><FieldValue label="Payment Term" value={po.payment_terms || '--'} /></Grid>
               <Grid item xs={12} sm={6} md={2}><FieldValue label="Split Schedule" value={lineItem.updated_delivery_date ? 'YES' : 'NA'} /></Grid>
-              <Grid item xs={12} sm={6} md={3}><FieldValue label="Incoterms" value={po.po_details?.shipment_details?.incoterms || '--'} /></Grid>
+              <Grid item xs={12} sm={6} md={3}><FieldValue label="Incoterm" value={po.incoterm || 'FCA'} /></Grid>
             </Grid>
           </SectionCard>
 
           <SectionCard title="Delivery Details">
             <Grid container spacing={2.2}>
-              <Grid item xs={12} sm={6} md={3}><FieldValue label="Incoterm" value={po.po_details?.shipment_details?.incoterms || '--'} /></Grid>
-              <Grid item xs={12} sm={6} md={2}><FieldValue label="Phone" value={po.po_details?.buyer_details?.telephone || '--'} /></Grid>
-              <Grid item xs={12} md={7}><FieldValue label="Address" value={po.po_details?.shipment_details?.address || po.po_details?.supplier_details?.address || '--'} /></Grid>
+              <Grid item xs={12} sm={6} md={3}><FieldValue label="Incoterm" value={po.incoterm || 'FCA'} /></Grid>
+              <Grid item xs={12} sm={6} md={2}><FieldValue label="Phone" value={po.po_details?.buyer_details?.telephone || '8793564490'} /></Grid>
+              <Grid item xs={12} md={7}><FieldValue label="Address" value={po.po_details?.shipment_details?.address || po.po_details?.supplier_details?.address || '742 Evergreen Terrace, Springfield, OR 97477, United States'} /></Grid>
             </Grid>
           </SectionCard>
 
