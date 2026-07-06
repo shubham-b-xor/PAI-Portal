@@ -15,6 +15,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { purchaseOrderService } from '@/api/services/purchaseOrderService';
 import { LineItem, PurchaseOrder } from '@/models';
 import { DocsRow } from './purchaseOrderDetails/types';
+import { formatDateForDisplay } from './purchaseOrderDetails/utils';
 
 const normalizeLineId = (line: LineItem) => {
   const raw = line.id || line.line_number;
@@ -171,8 +172,8 @@ const LineItemDetails: React.FC = () => {
       </Stack>
 
       <Stack direction="row" spacing={2.2} alignItems="center" flexWrap="wrap" sx={{ pl: 0.2 }}>
-        <Typography sx={{ fontSize: 13 }}>{formatDate(po.created_date)}</Typography>
-        <Typography sx={{ fontSize: 13 }}>Updated {po.last_modified_date ? formatDate(po.last_modified_date) : '--'}</Typography>
+        <Typography sx={{ fontSize: 13 }}>{formatDateForDisplay(po.created_date)}</Typography>
+        <Typography sx={{ fontSize: 13 }}>Updated {po.last_modified_date ? formatDateForDisplay(po.last_modified_date) : '--'}</Typography>
         <Typography sx={{ fontSize: 13 }}>By {po.last_modified_by || 'System'}</Typography>
         <Typography sx={{ fontSize: 13 }}>{po.source_system || 'Standard PO'}</Typography>
         <Chip

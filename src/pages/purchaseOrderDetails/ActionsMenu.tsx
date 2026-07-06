@@ -64,8 +64,8 @@ const ActionsMenu: React.FC<ActionsMenuProps> = ({ role, anchorEl, lineStatus, o
           <MenuItem onClick={() => { onClose(); onOpenDialog('REJECT'); }}><Stack direction="row" alignItems="center" spacing={1.5}><Close fontSize="small" /><Typography variant="body2">Reject</Typography></Stack></MenuItem>
           <Divider />
           <MenuItem onClick={() => { onClose(); onOpenDialog('ACCEPT'); }}><Stack direction="row" alignItems="center" spacing={1.5}><CheckCircle fontSize="small" /><Typography variant="body2">Accept</Typography></Stack></MenuItem>
-          <Divider />
-          <MenuItem onClick={() => { onClose(); onOpenDialog('ACKNOWLEDGE'); }}><Stack direction="row" alignItems="center" spacing={1.5}><InfoOutlined fontSize="small" /><Typography variant="body2">Acknowledge</Typography></Stack></MenuItem>
+          {/* <Divider /> */}
+          {/* <MenuItem onClick={() => { onClose(); onOpenDialog('ACKNOWLEDGE'); }}><Stack direction="row" alignItems="center" spacing={1.5}><InfoOutlined fontSize="small" /><Typography variant="body2">Acknowledge</Typography></Stack></MenuItem> */}
           <Divider />
           <MenuItem onClick={() => { onClose(); onOpenDialog('NEED_MORE_INFORMATION'); }}><Stack direction="row" alignItems="center" spacing={1.5}><InfoOutlined fontSize="small" /><Typography variant="body2">Need More Information</Typography></Stack></MenuItem>
         </>

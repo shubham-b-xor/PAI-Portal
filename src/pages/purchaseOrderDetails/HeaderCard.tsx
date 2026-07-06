@@ -56,8 +56,8 @@ const HeaderCard: React.FC<HeaderCardProps> = ({ po, actions }) => {
             <Typography variant="body2">
               {formatDateForDisplay(po.created_date)} • {formatRelativeTime(po.last_modified_date || po.created_date)}
             </Typography>
-            <Typography variant="body2">{po.last_modified_by || '-'}</Typography>
-            <Typography variant="body2">PO Type: {po.source_system || '-'}</Typography>
+            <Typography variant="body2">By {po.last_modified_by || '-'}</Typography>
+            <Typography variant="body2">{po.source_system || '-'}</Typography>
             <Chip
               label={po.status || 'PENDING'}
               size="small"

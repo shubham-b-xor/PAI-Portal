@@ -68,6 +68,7 @@ import {
   UploadDocumentDialog,
 } from '@/components/purchaseOrderDetails';
 import { DialogType } from './purchaseOrderDetails/types';
+import { formatDateForDisplay } from './purchaseOrderDetails/utils';
 
 type LineItemTabRow = {
   id: string;
@@ -1404,7 +1405,7 @@ const handleSearchChange = useCallback(
       },
       {
         field: 'updated_unit_price',
-        headerName: 'Update Unite Price',
+        headerName: 'Revised Unit Price',
         width: 105,
         renderCell: (params) =>
           hasCellValue(params.value) ? (
@@ -1430,7 +1431,7 @@ const handleSearchChange = useCallback(
               fontWeight: 600,
             }}
           >
-            Update Unit Price
+            Revised Unit Price
           </Typography>
         ),
       },
@@ -1442,7 +1443,7 @@ const handleSearchChange = useCallback(
       },
       {
         field: 'updated_net_value',
-        headerName: 'Updated Total',
+        headerName: 'Revised Total',
         width: 105,
         renderCell: (params) =>
           hasCellValue(params.value) ? (
@@ -1468,7 +1469,7 @@ const handleSearchChange = useCallback(
               fontWeight: 600,
             }}
           >
-            Updated Total
+            Revised Total
           </Typography>
         ),
       },
@@ -2179,19 +2180,19 @@ const handleSearchChange = useCallback(
        width: 95,
        renderCell: (params) => params.value || '--',
      },
-     {
-       field: 'documents',
-       headerName: 'Documents',
-       width: 100,
-       sortable: false,
-       filterable: false,
-       renderCell: (params) => {
-         const docs = params.value as unknown;
-         const hasDocs = Array.isArray(docs) ? docs.length > 0 : Boolean(docs);
+    //  {
+    //    field: 'documents',
+    //    headerName: 'Documents',
+    //    width: 100,
+    //    sortable: false,
+    //    filterable: false,
+    //    renderCell: (params) => {
+    //      const docs = params.value as unknown;
+    //      const hasDocs = Array.isArray(docs) ? docs.length > 0 : Boolean(docs);
 
-         return hasDocs ? <AttachFileIcon fontSize="small" color="action" /> : '--';
-       },
-     },
+    //      return hasDocs ? <AttachFileIcon fontSize="small" color="action" /> : '--';
+    //    },
+    //  },
      {
        field: 'action',
        headerName: 'Action',
@@ -2680,7 +2681,7 @@ const handleSearchChange = useCallback(
           mb: 2,
         }}
       >
-        Updated on {new Date().toLocaleString()}
+        Updated on {formatDateForDisplay(new Date().toISOString())}
       </Typography>
 
       {error && (

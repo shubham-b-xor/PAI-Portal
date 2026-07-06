@@ -183,7 +183,7 @@ export const buildLineColumns = ({
     },
     {
       field: 'updated_unit_price',
-      headerName: 'Updated Unit Price',
+      headerName: 'Revised Unit Price',
       width: 80,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant="body2" color="primary.main">
@@ -200,7 +200,7 @@ export const buildLineColumns = ({
                     fontWeight: 600,
                   }}
                 >
-                  Updated Unit Price
+                  Revised Unit Price
                 </Typography>
               ),
     },
@@ -214,7 +214,7 @@ export const buildLineColumns = ({
     },
     {
       field: 'updated_net_value',
-      headerName: 'Updated Total Value',
+      headerName: 'Revised Total Value',
       width: 90,
       renderCell: (params: GridRenderCellParams) => (
         <Typography variant="body2" color="primary.main">
@@ -231,39 +231,39 @@ export const buildLineColumns = ({
                     fontWeight: 600,
                   }}
                 >
-                 Updated Total Value
+                 Revised Total Value
                 </Typography>
               ),
       
       
     },
-    {
-      field: 'updated_total',
-      headerName: 'Updated Total',
-      width: 80,
-      renderCell: (params: GridRenderCellParams<LineItem>) => {
-        const row = params.row;
-        const curr = Number(row.net_value || 0);
-        const updated = Number(row.updated_net_value || row.net_value || 0);
-        const diff = updated - curr;
-        return (
-          <Typography variant="body2">{Number.isFinite(diff) ? diff.toFixed(2) : '-'}</Typography>
-        );
-      },
-      renderHeader: () => (
-                <Typography
-                  variant="body2"
-                  textAlign="center"
-                  sx={{
-                    whiteSpace: 'normal',
-                    lineHeight: 1.2,
-                    fontWeight: 600,
-                  }}
-                >
-                  Updated Total
-                </Typography>
-              ),
-    },
+    // {
+    //   field: 'updated_total',
+    //   headerName: 'Updated Total',
+    //   width: 80,
+    //   renderCell: (params: GridRenderCellParams<LineItem>) => {
+    //     const row = params.row;
+    //     const curr = Number(row.net_value || 0);
+    //     const updated = Number(row.updated_net_value || row.net_value || 0);
+    //     const diff = updated - curr;
+    //     return (
+    //       <Typography variant="body2">{Number.isFinite(diff) ? diff.toFixed(2) : '-'}</Typography>
+    //     );
+    //   },
+    //   renderHeader: () => (
+    //             <Typography
+    //               variant="body2"
+    //               textAlign="center"
+    //               sx={{
+    //                 whiteSpace: 'normal',
+    //                 lineHeight: 1.2,
+    //                 fontWeight: 600,
+    //               }}
+    //             >
+    //               Updated Total
+    //             </Typography>
+    //           ),
+    // },
     {
       field: 'required_in_house_date',
       headerName: 'Need By Date',

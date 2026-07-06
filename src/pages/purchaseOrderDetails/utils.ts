@@ -48,11 +48,19 @@ export const formatDateForDisplay = (value?: string | null): string => {
   const parsed = toValidDate(value);
   if (!parsed) return '-';
 
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: '2-digit',
+  const day = new Intl.DateTimeFormat('en-US', {
     day: '2-digit',
   }).format(parsed);
+
+  const month = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+  }).format(parsed);
+
+  const year = new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+  }).format(parsed);
+
+  return `${day}-${month}-${year}`;
 };
 
 export const getRequiredDeliveryDate = (po: PurchaseOrder): string | null => {
