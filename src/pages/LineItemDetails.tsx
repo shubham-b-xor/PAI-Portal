@@ -22,6 +22,17 @@ const normalizeLineId = (line: LineItem) => {
   return String(raw).trim().padStart(5, '0');
 };
 
+const getDisplayLineNumber = (line?: LineItem | null, fallback?: string) => {
+  const raw = line?.line_number || fallback || '';
+  const value = String(raw).trim();
+
+  if (!value) {
+    return '--';
+  }
+
+  return value.replace(/^0+/, '').padStart(5, '0');
+};
+
 const formatDate = (value?: string | null) => {
   if (!value) return '--';
   const parsed = new Date(value);
@@ -113,6 +124,8 @@ const LineItemDetails: React.FC = () => {
     );
   }, [po, lineId]);
 
+  const lineNumberDisplay = getDisplayLineNumber(lineItem, lineId);
+
   const lineDocuments = useMemo(
     () =>
       documentsRows.filter((document) =>
@@ -167,7 +180,7 @@ const LineItemDetails: React.FC = () => {
       <Stack direction="row" alignItems="center" spacing={0.75}>
         <LanguageIcon sx={{ color: '#6b7280', fontSize: 18 }} />
         <Typography sx={{ fontSize: 30, lineHeight: 1, fontWeight: 500, color: '#0b4f88' }}>
-          PO-{po.po_number}-Line Item No.-{String(lineId).padStart(5, '0')}
+          PO-{po.po_number}-Line Item No.-{lineNumberDisplay}
         </Typography>
       </Stack>
 
@@ -203,7 +216,7 @@ const LineItemDetails: React.FC = () => {
           <SectionCard title="Line Item Specification">
             <Grid container spacing={2}>
               <Grid item xs={12} sm={4} md={2}>
-                <FieldValue label="Line Item Number" value={String(lineId || '').padStart(5, '0')} />
+                <FieldValue label="Line Item Number" value={lineNumberDisplay} />
               </Grid>
               <Grid item xs={12} sm={4} md={2}>
                 <FieldValue label="Material Number" value={lineItem.material_code || '--'} />
