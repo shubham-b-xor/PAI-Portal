@@ -30,6 +30,25 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const userNameOverrides: Record<string, string> = {
+    "Procurement Specialist 1": "John",
+    "Procurement Specialist 2": "Karl",
+    "Procurement Specialist 3": "Smith",
+    "Procurement Specialist 4": "David",
+    "Procurement Specialist 5": "Michael",
+    "Procurement Specialist 6": "James",
+    "Procurement Specialist 7": "Robert",
+    "Procurement Specialist 8": "William",
+    "Procurement Specialist 9": "Thomas",
+    "Procurement Specialist 10": "Daniel",
+    "Procurement Specialist 11": "Chris",
+    "Procurement Specialist 12": "Kevin",
+  };
+
+  const getDisplayName = (name?: string) => {
+    if (!name) return "";
+    return userNameOverrides[name] || name;
+  };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -138,8 +157,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             <>
               <Tooltip title="Account settings">
                 <IconButton onClick={handleMenuOpen} sx={{ p: 0 }}>
-                  <Avatar alt={user.name} sx={{ width: 36, height: 36, bgcolor: 'secondary.main' }}>
-                    {user.name.charAt(0).toUpperCase()}
+                  <Avatar
+                    alt={getDisplayName(user.name)}
+                    sx={{ width: 36, height: 36, bgcolor: 'secondary.main' }}
+                  >
+                    {getDisplayName(user.name).charAt(0).toUpperCase()}
                   </Avatar>
                 </IconButton>
               </Tooltip>
@@ -153,7 +175,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
               >
                 <MenuItem disabled>
                   <Typography variant="body2" fontWeight="bold">
-                    {user.name}
+                     {getDisplayName(user.name)}
                   </Typography>
                 </MenuItem>
                 <MenuItem disabled>

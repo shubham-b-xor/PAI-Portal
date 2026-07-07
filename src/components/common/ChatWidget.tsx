@@ -285,6 +285,22 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   const conversationsRef = useRef<Conversation[]>([AI_CONVERSATION, ...initialConversations]);
   const backendSessionsRef = useRef<ChatSessionSummary[]>([]);
   const acsMessagesByConversationRef = useRef<Record<number, any[]>>({});
+  const nameOverrides: Record<string, string> = {
+    "Procurement Specialist 1": "John",
+    "Procurement Specialist 2": "Karl",
+    "Procurement Specialist 3": "Smith",
+    "Procurement Specialist 4": "David",
+    "Procurement Specialist 5": "Michael",
+    "Procurement Specialist 6": "James",
+    "Procurement Specialist 7": "Robert",
+    "Procurement Specialist 8": "William",
+    "Procurement Specialist 9": "Thomas",
+    "Procurement Specialist 10": "Daniel",
+    "Procurement Specialist 11": "Chris",
+    "Procurement Specialist 12": "Kevin",
+  };
+
+  const getDisplayName = (name: string) => nameOverrides[name] || name;
 
   const acsSessionRefs = useRef<Record<number, AcsSessionEntry>>({});
   const { setUnreadMap } = useChatContext();
@@ -1641,11 +1657,11 @@ next[conversation.id] = [...mergedAcsMessages, ...nonAcsMessages].sort(
                     >
                       <ListItemAvatar>
                         <Badge badgeContent={conversation.unread || null} color="primary">
-                          <Avatar sx={{ bgcolor: theme.palette.primary.main }}>{conversation.avatar}</Avatar>
+                          <Avatar sx={{ bgcolor: theme.palette.primary.main }}> {getDisplayName(conversation.name).charAt(0)} </Avatar>
                         </Badge>
                       </ListItemAvatar>
                       <ListItemText 
-                        primary={conversation.name} 
+                        primary={getDisplayName(conversation.name)}
                         secondary={getConversationPreview(conversation)}
                         primaryTypographyProps={{ fontWeight: 600 }} 
                       />
@@ -1681,7 +1697,7 @@ next[conversation.id] = [...mergedAcsMessages, ...nonAcsMessages].sort(
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.5, borderBottom: `1px solid ${theme.palette.divider}`, backgroundColor: theme.palette.background.paper }}>
               <Box>
                 <Typography variant="subtitle1">
-                  {selectedConversation?.name} 
+                  {selectedConversation && getDisplayName(selectedConversation.name)}
                   {selectedConversation?.poNumber && ` (${selectedConversation.poNumber})`}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">{selectedConversation?.role}</Typography>
@@ -1917,7 +1933,9 @@ next[conversation.id] = [...mergedAcsMessages, ...nonAcsMessages].sort(
                             fontSize: 11,
                         }}
                     >
-                        {selectedConversation?.name?.charAt(0)}
+                        {selectedConversation
+  ? getDisplayName(selectedConversation.name).charAt(0)
+  : ""}
                     </Avatar>
 
                     <Box
@@ -1964,7 +1982,10 @@ next[conversation.id] = [...mergedAcsMessages, ...nonAcsMessages].sort(
                             userSelect: "none",
                         }}
                     >
-                        {selectedConversation?.name} is typing...
+                        {selectedConversation
+                          ? getDisplayName(selectedConversation.name)
+                          : ""}{" "}
+                        is typing...
                     </Typography>
                 </Box>
                 )
@@ -1989,7 +2010,15 @@ next[conversation.id] = [...mergedAcsMessages, ...nonAcsMessages].sort(
                 <TextField 
                   fullWidth 
                   size="small" 
-                  placeholder={selectedFile ? "Add a caption..." : `Message ${selectedConversation?.name || ''}...`} 
+                  placeholder={
+                      selectedFile
+                        ? "Add a caption..."
+                        : `Message ${
+                            selectedConversation
+                              ? getDisplayName(selectedConversation.name)
+                              : ""
+                          }...`
+                    }
                   value={draft} 
                   onChange={(event) => {
 
