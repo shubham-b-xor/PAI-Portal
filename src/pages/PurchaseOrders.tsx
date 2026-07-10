@@ -20,6 +20,8 @@ import {
   InputAdornment,
   IconButton,
   Tooltip,
+  Tabs,
+  Tab,
   Menu,
   MenuItem as ActionMenuItem,
   ListItemIcon,
@@ -51,6 +53,7 @@ import {
 } from '@/models';
 import { useAuth } from '@/hooks/useAuth';
 import POFilters from '@/components/common/POFilters';
+import AntdMrpExceptionTable from '@/components/common/AntdMrpExceptionTable';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import { usePagination } from '@/hooks/usePagination';
 import { format } from 'date-fns';
@@ -80,12 +83,15 @@ const PAGE_PIN_TYPES: PinType[] = ['po', 'po_to_review', 'mrp_exception'];
 
 type PurchaseOrdersModuleVariant = 'default' | 'supplier-collaboration' | 'cockpit';
 
+const MRP_EXCEPTION_ANTD_TAB = 4;
+
 interface PurchaseOrdersProps {
   moduleVariant?: PurchaseOrdersModuleVariant;
 }
 
 const MODULE_TABS: Record<PurchaseOrdersModuleVariant, Array<{ label: string; value: number }>> = {
   default: [
+    { label: 'MRP EXCEPTION (ANTD)', value: MRP_EXCEPTION_ANTD_TAB },
     { label: 'MRP EXCEPTION', value: 3 },
     { label: 'PO TO REVIEW', value: 2 },
     { label: 'ALL OPEN PO', value: 0 },
@@ -96,6 +102,7 @@ const MODULE_TABS: Record<PurchaseOrdersModuleVariant, Array<{ label: string; va
     { label: 'ALL OPEN PO', value: 0 },
   ],
   cockpit: [
+    { label: 'MRP EXCEPTION (ANTD)', value: MRP_EXCEPTION_ANTD_TAB },
     { label: 'MRP EXCEPTION', value: 3 },
     { label: 'PO TO REVIEW', value: 2 },
     { label: 'ALL OPEN PO', value: 0 },
@@ -162,7 +169,8 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
   const shouldHighlightNeedByDate = isSupplierCollaboration && selectedTab === 3;
   
   const isPOToReviewTab = selectedTab === 2;
-  const isMRPExceptionTab = selectedTab === 3;
+  const isMRPExceptionTab = selectedTab === 3 || selectedTab === MRP_EXCEPTION_ANTD_TAB;
+  const isAntdMrpExceptionTab = selectedTab === MRP_EXCEPTION_ANTD_TAB;
   const isLineItemTab = isPOToReviewTab || isMRPExceptionTab;
 
   const [loading, setLoading] = useState(true);
@@ -248,6 +256,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
         return poToReviewPinFilter;
 
       case 3: // MRP EXCEPTION
+      case MRP_EXCEPTION_ANTD_TAB: // MRP EXCEPTION (ANTD)
         return mrpPinFilter;
 
       case 0: // OPEN PO / normal PO list
@@ -264,6 +273,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
           break;
 
         case 3: // MRP EXCEPTION
+        case MRP_EXCEPTION_ANTD_TAB: // MRP EXCEPTION (ANTD)
           setMrpPinFilter(value);
           break;
 
@@ -303,10 +313,11 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
   };
 
   const togglePOToReviewLinePin = (lineItemRowId: string) => {
+    const normalizedLineItemRowId = String(lineItemRowId);
     setPinnedPOToReviewLineItemIds((prev) => {
-      const updated = prev.includes(lineItemRowId)
-        ? prev.filter((id) => id !== lineItemRowId)
-        : [...prev, lineItemRowId];
+      const updated = prev.includes(normalizedLineItemRowId)
+        ? prev.filter((id) => id !== normalizedLineItemRowId)
+        : [...prev, normalizedLineItemRowId];
 
       if (userId) {
         userService.updatePinnedRows(userId, updated, 'po_to_review');
@@ -317,10 +328,11 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
   };
 
   const toggleMRPLinePin = (lineItemRowId: string) => {
+    const normalizedLineItemRowId = String(lineItemRowId);
     setPinnedMRPLineItemIds((prev) => {
-      const updated = prev.includes(lineItemRowId)
-        ? prev.filter((id) => id !== lineItemRowId)
-        : [...prev, lineItemRowId];
+      const updated = prev.includes(normalizedLineItemRowId)
+        ? prev.filter((id) => id !== normalizedLineItemRowId)
+        : [...prev, normalizedLineItemRowId];
 
       if (userId) {
         userService.updatePinnedRows(userId, updated, 'mrp_exception');
@@ -394,7 +406,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
     }
 
     const startTime = performance.now();
-    const isLineTabRequest = selectedTab === 2 || selectedTab === 3;
+    const isLineTabRequest = selectedTab === 2 || selectedTab === 3 || selectedTab === MRP_EXCEPTION_ANTD_TAB;
 
     try {
       setLoading(true);
@@ -537,6 +549,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
   };
 
   const getCurrentTabActions = useCallback((row?: LineItemTabRow): string[] => {
+    const isMrpLikeTab = selectedTab === 3 || selectedTab === MRP_EXCEPTION_ANTD_TAB;
     const rowStatus = String(row?.line_status || row?.status || '').toUpperCase();
     if (rowStatus.includes('HOLD')) {
       // Suppliers should not be able to unhold or perform actions on held lines
@@ -555,7 +568,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
     }
 
     if (user?.role !== 'SUPPLIER') {
-      if (selectedTab === 3) {
+      if (isMrpLikeTab) {
         return ['ACCEPT', 'REJECT'];
       }
       if (selectedTab === 2) {
@@ -564,7 +577,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
     }
 
     if (moduleVariant === 'cockpit') {
-      if (selectedTab === 3) {
+      if (isMrpLikeTab) {
         return ['MOVE_IN', 'MOVE_OUT', 'SPLIT', 'HOLD', 'NEED_MORE_INFORMATION'];
       }
       if (selectedTab === 2) {
@@ -2351,19 +2364,25 @@ const handleSearchChange = useCallback(
     switch (selectedTab) {
       case 2: {
         return currentPinFilter === 'pinned'
-          ? lineItemRows.filter((row) => pinnedPOToReviewLineItemIds.includes(row.id))
+          ? lineItemRows.filter((row) => pinnedPOToReviewLineItemIds.includes(String(row.id)))
           : lineItemRows;
       }
 
       case 3: {
         if (isSupplierCollaboration) {
           return currentPinFilter === 'pinned'
-            ? lineItemRows.filter((row) => pinnedPOToReviewLineItemIds.includes(row.id))
+            ? lineItemRows.filter((row) => pinnedPOToReviewLineItemIds.includes(String(row.id)))
             : lineItemRows;
         }
 
         return currentPinFilter === 'pinned'
-          ? lineItemRows.filter((row) => pinnedMRPLineItemIds.includes(row.id))
+          ? lineItemRows.filter((row) => pinnedMRPLineItemIds.includes(String(row.id)))
+          : lineItemRows;
+      }
+
+      case MRP_EXCEPTION_ANTD_TAB: {
+        return currentPinFilter === 'pinned'
+          ? lineItemRows.filter((row) => pinnedMRPLineItemIds.includes(String(row.id)))
           : lineItemRows;
       }
 
@@ -2383,18 +2402,21 @@ const handleSearchChange = useCallback(
     switch (selectedTab) {
       case 2: {
         // PO TO REVIEW / Supplier ACTION REQUIRED
-        return lineItemRows.filter((row) => pinnedPOToReviewLineItemIds.includes(row.id)).length;
+        return lineItemRows.filter((row) => pinnedPOToReviewLineItemIds.includes(String(row.id))).length;
       }
 
       case 3: {
         // Supplier EXCEPTIONS & ALERTS currently uses same supplier pin bucket
         if (isSupplierCollaboration) {
-          return lineItemRows.filter((row) => pinnedPOToReviewLineItemIds.includes(row.id)).length;
+          return lineItemRows.filter((row) => pinnedPOToReviewLineItemIds.includes(String(row.id))).length;
         }
 
         // PS MRP EXCEPTION
-        return lineItemRows.filter((row) => pinnedMRPLineItemIds.includes(row.id)).length;
+        return lineItemRows.filter((row) => pinnedMRPLineItemIds.includes(String(row.id))).length;
       }
+
+      case MRP_EXCEPTION_ANTD_TAB:
+        return lineItemRows.filter((row) => pinnedMRPLineItemIds.includes(String(row.id))).length;
 
       case 0:
       default:
@@ -2705,7 +2727,83 @@ const handleSearchChange = useCallback(
       )}
       {/* TODO: Optimise this block if selected */}
       <Box sx={{ height: appliedFilters.length > 0 ? '78vh' : '80vh', width: '100%' }}>
-        <DataGrid
+        {isAntdMrpExceptionTab && !isSupplierCollaboration ? (
+          <>
+            <Box
+              sx={{
+                border: '1.5px solid #CFCFCF',
+                borderBottom: 'none',
+                mb: 0,
+              }}
+            >
+              <Tabs
+                value={selectedTab}
+                onChange={(_, tab) => {
+                  setSelectedTab(tab);
+                  setPage(0);
+                  setSelectedRowIds([]);
+                }}
+                textColor="primary"
+                indicatorColor="primary"
+                sx={{
+                  minHeight: 40,
+                  '& .MuiTab-root': {
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    minHeight: 40,
+                    px: 2,
+                  },
+                }}
+              >
+                {moduleTabs.map((tab) => (
+                  <Tab key={`${tab.label}-${tab.value}`} label={tab.label} value={tab.value} />
+                ))}
+              </Tabs>
+            </Box>
+
+            <AntdMrpExceptionTable
+              rows={currentRows as LineItemTabRow[]}
+              loading={loading}
+              rowCount={currentPinFilter === 'pinned' ? currentRows.length : rowCount}
+              page={page}
+              pageSize={pageSize}
+              sortBy={sortModel.sort_by}
+              sortOrder={sortModel.sort_order}
+              selectedSites={selectedSites}
+              availableSites={availableSites}
+              searchInput={searchInput}
+              pinFilter={currentPinFilter}
+              pinnedCount={currentPinnedCount}
+              pinnedRowIds={pinnedMRPLineItemIds}
+              selectedRowIds={selectedRowIds}
+              onSearchChange={handleSearchChange}
+              onSelectedSitesChange={handleSelectedSitesChange}
+              onPinFilterChange={handleCurrentPinFilterChange}
+              onTogglePin={toggleMRPLinePin}
+              onActionClick={(event, row) => openActionMenu(event, row as LineItemTabRow)}
+              onRowClick={(row) => handleGridRowClick(row)}
+              onPaginationChange={handlePaginationModelChange}
+              onSortChange={(sortBy, sortOrder) => {
+                const currentSortBy = sortModel.sort_by || undefined;
+                if (sortBy === currentSortBy && sortOrder === sortModel.sort_order) {
+                  return;
+                }
+
+                if (!sortBy && !sortOrder && !currentSortBy) {
+                  return;
+                }
+
+                setSortModel({
+                  sort_by: sortBy,
+                  sort_order: sortOrder || sortModel.sort_order,
+                });
+                setPage(0);
+              }}
+              onSelectedRowIdsChange={(ids) => setSelectedRowIds(ids as GridRowSelectionModel)}
+            />
+          </>
+        ) : (
+          <DataGrid
           key={`po-grid-${selectedTab}`}
           rows={currentRows}
           columns={currentColumns}
@@ -2798,7 +2896,8 @@ const handleSearchChange = useCallback(
           slots={{
             toolbar: ToolbarComponent,
           }}
-        />
+          />
+        )}
       </Box>
       {/* Advanced Filters Dialog */}
       <Dialog
