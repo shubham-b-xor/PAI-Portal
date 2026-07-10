@@ -37,6 +37,8 @@ import ActionsMenu from './purchaseOrderDetails/ActionsMenu';
 import { DialogType, DocsRow, HistoryRow } from './purchaseOrderDetails/types';
 import { formatLineId, getTabs, isSupplierRole } from './purchaseOrderDetails/utils';
 
+const EMPTY_LINE_ITEMS: LineItem[] = [];
+
 const PurchaseOrderDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
@@ -231,7 +233,7 @@ const PurchaseOrderDetails: React.FC = () => {
     };
   }, [po?.id, po?.po_number, po?.procurement_specialist_id, po?.supplier_email, po?.supplier_name, supplier, user?.email, user?.name]);
 
-  const lineItems = po?.line_items || [];
+  const lineItems = useMemo(() => po?.line_items ?? EMPTY_LINE_ITEMS, [po?.line_items]);
   const hasSelectedSupplierLineRows = selectedLineIds.length > 0;
   const buildLinePinKey = useCallback((lineId: string) => `${id || 'unknown'}::${lineId}`, [id]);
   const buildDocumentPinKey = useCallback((documentId: string) => `${id || 'unknown'}::${documentId}`, [id]);
@@ -240,12 +242,23 @@ const PurchaseOrderDetails: React.FC = () => {
     // Keep action state in sync with current PO line set after reloads.
     const availableLineIds = new Set(lineItems.map((line) => formatLineId(line)));
 
-    setSelectedLineIds((prev) => prev.filter((lineId) => availableLineIds.has(lineId)));
+    setSelectedLineIds((prev) => {
+      const filtered = prev.filter((lineId) => availableLineIds.has(lineId));
+      if (filtered.length === prev.length && filtered.every((lineId, index) => lineId === prev[index])) {
+        return prev;
+      }
+      return filtered;
+    });
 
     setSelectedLine((prev) => {
       if (!prev) return null;
       const selectedId = formatLineId(prev);
-      return lineItems.find((line) => formatLineId(line) === selectedId) || null;
+      const next = lineItems.find((line) => formatLineId(line) === selectedId) || null;
+      if (!next) {
+        return prev === null ? prev : null;
+      }
+
+      return formatLineId(next) === selectedId ? prev : next;
     });
   }, [lineItems]);
 
