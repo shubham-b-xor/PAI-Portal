@@ -45,6 +45,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import SyncIcon from '@mui/icons-material/Sync';
 import { purchaseOrderService } from '@/api/services/purchaseOrderService';
+import { useUserGridColumnVisibility } from '@/hooks/useUserGridColumnVisibility';
 import {
   PurchaseOrder,
   POFilters as POFiltersType,
@@ -160,7 +161,7 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
 
     return MODULE_TABS[moduleVariant];
   }, [moduleVariant, isDefaultSupplierView]);
-  const defaultTab = moduleTabs[3]?.value ?? 3;
+  const defaultTab = moduleTabs.find((tab) => tab.value === 3)?.value ?? moduleTabs[0]?.value ?? 3;
   const isSupplierCollaboration = isSupplierCollaborationMode;
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
@@ -249,6 +250,42 @@ const PurchaseOrders: React.FC<PurchaseOrdersProps> = ({ moduleVariant = 'defaul
   //line item level pinning for potoreview & MRP tab
   const [pinnedPOToReviewLineItemIds, setPinnedPOToReviewLineItemIds] = useState<string[]>([]);
   const [pinnedMRPLineItemIds, setPinnedMRPLineItemIds] = useState<string[]>([]);
+
+  const gridColumnVisibilityKey = React.useMemo(() => {
+    if (isSupplierCollaboration) {
+      switch (selectedTab) {
+        case 2:
+          return 'supplier_action_required_columns';
+
+        case 3:
+          return 'supplier_exceptions_alerts_columns';
+
+        case 0:
+        default:
+          return 'supplier_open_po_columns';
+      }
+    }
+
+    switch (selectedTab) {
+      case 2:
+        return 'ps_po_to_review_columns';
+
+      case 3:
+        return 'ps_mrp_exception_columns';
+
+      case MRP_EXCEPTION_ANTD_TAB:
+        return 'ps_mrp_exception_antd_columns';
+
+      case 0:
+      default:
+        return 'ps_open_po_columns';
+    }
+  }, [isSupplierCollaboration, selectedTab]);
+
+  const { columnVisibilityModel, handleColumnVisibilityModelChange } = useUserGridColumnVisibility(
+    userId,
+    gridColumnVisibilityKey
+  );
 
   const currentPinFilter = React.useMemo(() => {
     switch (selectedTab) {
@@ -2807,6 +2844,9 @@ const handleSearchChange = useCallback(
           key={`po-grid-${selectedTab}`}
           rows={currentRows}
           columns={currentColumns}
+          columnVisibilityModel={columnVisibilityModel}
+          onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
+
           rowCount={
             isLineItemTab
               ? currentPinFilter === 'pinned'

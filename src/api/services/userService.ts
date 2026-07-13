@@ -20,10 +20,7 @@ export const userService = {
     return response.data;
   },
 
-  getPinnedRows: async (
-    userId: string,
-    pinType: PinType = 'po'
-  ): Promise<string[]> => {
+  getPinnedRows: async (userId: string, pinType: PinType = 'po'): Promise<string[]> => {
     const response = await apiClient.get<{ pinned_rows: string[] }>(
       `/user-pref/pinned-rows?user_id=${userId}&pin_type=${pinType}`
     );
@@ -68,11 +65,45 @@ export const userService = {
     return response.data.line_pinned_rows;
   },
 
-  updateLinePinnedRows: async (userId: string, linePinnedRows: string[]): Promise<{ line_pinned_rows: string[] }> => {
-    const response = await apiClient.put<{ line_pinned_rows: string[] }>('/user-pref/line-pinned-rows', {
-      user_id: userId,
-      line_pinned_rows: linePinnedRows,
-    });
+  updateLinePinnedRows: async (
+    userId: string,
+    linePinnedRows: string[]
+  ): Promise<{ line_pinned_rows: string[] }> => {
+    const response = await apiClient.put<{ line_pinned_rows: string[] }>(
+      '/user-pref/line-pinned-rows',
+      {
+        user_id: userId,
+        line_pinned_rows: linePinnedRows,
+      }
+    );
+    return response.data;
+  },
+
+  getGridColumnVisibility: async (
+    userId: string,
+    gridKey: string
+  ): Promise<Record<string, boolean>> => {
+    const response = await apiClient.get<{ column_visibility_model: Record<string, boolean> }>(
+      `/user-pref/grid-column-visibility?user_id=${userId}&grid_key=${gridKey}`
+    );
+
+    return response.data.column_visibility_model || {};
+  },
+
+  updateGridColumnVisibility: async (
+    userId: string,
+    gridKey: string,
+    columnVisibilityModel: Record<string, boolean>
+  ): Promise<{ column_visibility_model: Record<string, boolean> }> => {
+    const response = await apiClient.put<{ column_visibility_model: Record<string, boolean> }>(
+      '/user-pref/grid-column-visibility',
+      {
+        user_id: userId,
+        grid_key: gridKey,
+        column_visibility_model: columnVisibilityModel,
+      }
+    );
+
     return response.data;
   },
 };
