@@ -7,7 +7,7 @@ import PrivateRoute from '@/components/common/PrivateRoute';
 import Dashboard from '@/pages/Dashboard';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
-import PurchaseOrders from '@/pages/PurchaseOrders';
+import PurchaseOrders from '@/pages/purchaseOrders/PurchaseOrders';
 import PurchaseOrderDetails from '@/pages/PurchaseOrderDetails';
 import SupplierCollaboration from '@/pages/SupplierCollaboration';
 import Cockpit from '@/pages/Cockpit';
