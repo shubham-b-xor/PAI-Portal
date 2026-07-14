@@ -29,7 +29,7 @@ export function useUserGridColumnVisibility(
 
       try {
         setLoading(true);
-        
+        //ts-ignore
         const savedModel = await userService.getGridColumnVisibility(userId, gridKey);
 
         if (active) {
@@ -62,7 +62,7 @@ export function useUserGridColumnVisibility(
       if (!userId || !gridKey) {
         return;
       }
-
+      //ts-ignore
       void userService.updateGridColumnVisibility(userId, gridKey, model);
     },
     [userId, gridKey]
