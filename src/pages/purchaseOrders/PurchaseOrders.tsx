@@ -39,6 +39,7 @@ import { useSupplierActionRequiredColumns } from './columns/supplier/useSupplier
 import { useSupplierExceptionsAlertsColumns } from './columns/supplier/useSupplierExceptionsAlertsColumns';
 import { useOpenPoColumns } from './columns/ps/useOpenPoColumns';
 import { useSupplierOpenPoColumns } from './columns/supplier/useSupplierOpenPoColumns';
+import { useCurrentPurchaseOrderColumns } from './columns/useCurrentPurchaseOrderColumns';
 import {
   PurchaseOrder,
   POFilters as POFiltersType,
@@ -1013,41 +1014,15 @@ const handleSearchChange = useCallback(
     [user?.role, supplierColumns, columns]
   );
 
-  const currentColumns = React.useMemo(() => {
-    if (isSupplierCollaboration) {
-      switch (selectedTab) {
-        case 2: // ACTION REQUIRED
-          return supplierActionRequiredColumns;
-
-        case 3: // EXCEPTIONS & ALERTS
-          return supplierExceptionsAlertsColumns;
-        // temporary, we'll replace in next step
-
-        default:
-          return gridColumns;
-      }
-    }
-
-    switch (selectedTab) {
-      case 2: // PO TO REVIEW
-        return poToReviewColumns;
-
-      case 3: // MRP EXCEPTION
-        return mrpExceptionColumns;
-
-      default:
-        return gridColumns;
-    }
-  }, [
+  const currentColumns = useCurrentPurchaseOrderColumns({
     isSupplierCollaboration,
     selectedTab,
-    supplierActionRequiredColumns,
-    supplierExceptionsAlertsColumns,
+    gridColumns,
     poToReviewColumns,
     mrpExceptionColumns,
-    gridColumns,
-
-  ]);
+    supplierActionRequiredColumns,
+    supplierExceptionsAlertsColumns,
+  });
 
   const displayedRows = React.useMemo(() => {
     const rows = pinFilter === 'pinned' ? pinnedPOs : purchaseOrders;
@@ -1297,50 +1272,6 @@ const handleSearchChange = useCallback(
       },
     ];
   }, [sortModel.sort_by, sortModel.sort_order]);
-  
-  //saperate page view for supplier & PS
-  // const supplierColumns = React.useMemo(
-  //   () =>
-  //     columns.filter((col) =>
-  //       [
-  //         'pin',
-  //         'po_number',
-  //         'status',
-  //         'supplier_name',
-  //         'total_value',
-  //         'line_items',
-  //         'revision_changes',
-  //         'buyer_name',
-  //         'buyer_email',
-  //         'buyer_phone',
-  //         'site',
-  //       ].includes(col.field)
-  //     ),
-  //   [columns]
-  // );
-
-  // const gridColumns = React.useMemo(
-  //   () => (user?.role === 'SUPPLIER' ? supplierColumns : columns),
-  //   [user?.role, supplierColumns, columns]
-  // );
-
-  // const displayedRows = React.useMemo(() => {
-  //   const rows = pinFilter === 'pinned' ? pinnedPOs : purchaseOrders;
-
-  //   switch (selectedTab) {
-  //     case 1: // OPEN PO
-  //       return rows.filter(
-  //         (po) => po.status === 'CREATED' || po.status === 'IN_PROGRESS' || po.status === 'APPROVED'
-  //       );
-
-  //     case 2: // PASS DELIVERY DATE
-  //       return rows;
-
-  //     case 0: // ALL PO
-  //     default:
-  //       return rows;
-  //   }
-  // }, [selectedTab, pinFilter, purchaseOrders, pinnedPOs]);
 
   if (loading && purchaseOrders.length === 0) {
     return <LoadingSpinner message="Loading purchase orders..." />;
